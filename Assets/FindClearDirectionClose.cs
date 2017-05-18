@@ -7,11 +7,13 @@ public class FindClearDirectionClose : StateMachineBehaviour {
 	Vector3 moveDirection = new Vector3();
 	Quaternion rot;
 	public Vector3[] directionsToCheck;
+	public 
 
 	 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		initDirectionsToCheck ();
 		fish = animator.gameObject;
+		camParent = GameObject.FindGameObjectWithTag("CamParent");
 
 		/* Automatic, not user controlled, direction
 		// Set new direction for fish
