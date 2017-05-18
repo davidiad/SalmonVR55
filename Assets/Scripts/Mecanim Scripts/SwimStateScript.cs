@@ -7,7 +7,7 @@ public class SwimStateScript : StateMachineBehaviour {
 	private GameObject fish;
 	private GameObject fishParent;
 	private FishAni fishManager;
-	private float moveSpeed = 1.1f;
+	private float moveSpeed;
 	//public Slider speedSlider;
 
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -18,7 +18,7 @@ public class SwimStateScript : StateMachineBehaviour {
 		fishManager = fish.GetComponent<FishAni> ();
 
 		//reset moveSpeed
-		moveSpeed = 1.1f;
+		moveSpeed = 0.39f;
 		fishManager.moveSpeed = moveSpeed;
 	}
 
@@ -41,7 +41,7 @@ public class SwimStateScript : StateMachineBehaviour {
 	*/
 
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		updateMoveSpeed ();
+		//updateMoveSpeed ();
 		fishParent.transform.position += fish.transform.forward * moveSpeed;
 	}
 

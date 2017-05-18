@@ -13,7 +13,7 @@ public class FindClearDirection : StateMachineBehaviour {
 	//
 		fish = animator.gameObject;
 		fishManager = fish.GetComponent<FishAni> ();
-		fishManager.moveSpeed = 0.005f; // slow down the fish, until the user rotates to a clear direction
+		fishManager.moveSpeed = 0.0f;//145f; // slow down the fish, until the user rotates to a clear direction
 		mainCam = GameObject.FindGameObjectWithTag("MainCamera");
 		direction = fish.transform.forward;
 
@@ -24,11 +24,11 @@ public class FindClearDirection : StateMachineBehaviour {
 
 
 		RaycastHit hit = new RaycastHit();
-		float hitLength = 9.0f;
+		float hitLength = 15.0f; // make hitLength larger than Avoid hitLength, so that it's not sent back to Swim state unless it's definitely clear
 		int layermask = (1<<11) | (1<<4); // layer 13 is the fish trigger, don't want the ray to detect that
 		Debug.DrawRay (fish.transform.position, mainCam.transform.forward, Color.red, 6.0f);
-		if (Physics.Raycast (fish.transform.position, mainCam.transform.forward, out hit, hitLength, layermask)) {
-			fishManager.moveSpeed = 1.4f;
+		if (!Physics.Raycast (fish.transform.position, mainCam.transform.forward, out hit, hitLength, layermask)) {
+			//fishManager.moveSpeed = 1.4f;
 			animator.SetBool ("foundClearDirection", true);
 		}
 

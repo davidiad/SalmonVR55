@@ -8,16 +8,19 @@ public class CamMatchTarget : MonoBehaviour {
 
 	private GameObject fish;
 	private GameObject fishParent;
+	private FishAni fishManager;
 
 	// Use this for initialization
 	void Start () {
 		fish = GameObject.FindGameObjectWithTag("Fishy");
 		fishParent = GameObject.FindGameObjectWithTag("FishParent");
+		fishManager = fish.GetComponent<FishAni> ();
 		moveSpeed = 1.0f;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		moveSpeed = fishManager.moveSpeed;
 		gameObject.transform.position = fishParent.transform.position;
 	}
 
