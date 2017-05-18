@@ -32,15 +32,17 @@ public class jumpStateScript : StateMachineBehaviour {
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+		Debug.Log ("Updating Jump State");
 		gorb.transform.rotation = Quaternion.Slerp(gorb.transform.rotation, targetRotation, 3.5f * Time.deltaTime);
 
-		if ((Vector3.Dot (go.transform.forward, jumpDirection)) > 0.98) {
+		//if ((Vector3.Dot (go.transform.forward, jumpDirection)) > 0.98) {
+		gorb.transform.parent = null;
 			gorb.isKinematic = false;
 			setRagdollState(true);
 			animator.enabled = false;
 			Vector3 forceVector = jumpforce * jumpDirection;
 			gorb.AddForce(forceVector);
-		}
+		//}
 		if(Input.GetMouseButtonDown(0))
 		{
 			//

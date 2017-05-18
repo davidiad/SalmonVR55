@@ -4,6 +4,7 @@ using System.Collections;
 public class Avoid : StateMachineBehaviour {
 
 	private GameObject fish;
+	private GameObject fishParent;
 	private GameObject movingObject;
 	FishAni fishManager;
 	//private float turningMoveSpeed;
@@ -16,6 +17,7 @@ public class Avoid : StateMachineBehaviour {
 
 		fish = animator.gameObject;
 		movingObject = GameObject.FindGameObjectWithTag ("MainCamera");
+		fishParent = GameObject.FindGameObjectWithTag ("FishParent");
 		fishManager = fish.GetComponent<FishAni> ();
 		waterlevel = fishManager.waterlevel;
 		//		waterlevel = fish.GetComponent<FishAni> ().waterlevel;
@@ -35,9 +37,10 @@ public class Avoid : StateMachineBehaviour {
 		int layermask = (1 << 11) | (1 << 4); // layer 13 is the fish trigger, don't want the ray to detect that
 
 		// If fish is above surface
-		if (fish.transform.position.y > (waterlevel - 0.2f)) {
+		if (fishParent.transform.position.y > (waterlevel - 0.2f)) {
 
-			fishManager.moveSpeed = 0.017f; // slow down till user looks in a clear direction
+			fishManager.moveSpeed = 0.0017f; // slow down till user looks in a clear direction
+			/* Rotation code won't work in VR -- user controls rotation
 			float amountToRotateDown = (fish.transform.position.y - (waterlevel - 0.2f)) * 4.0f;
 			if (amountToRotateDown > 10.0f) {
 				amountToRotateDown = 10.0f;
@@ -46,6 +49,7 @@ public class Avoid : StateMachineBehaviour {
 			}
 			directionChange = new Vector3 (amountToRotateDown, 0.0f, 0.0f);
 			fish.transform.Rotate (directionChange);
+			*/
 		}
 		Debug.Log("Avoid1");
 		if (Physics.Raycast (fish.transform.position, movingObject.transform.forward, out hit, hitLength, layermask)) {

@@ -4,11 +4,15 @@ using System.Collections;
 public class FishAni : MonoBehaviour 
 {
 	public Vector3 chdir;
-	public float waterlevel = 14.7f;
+	public float waterlevel = 24.7f;
 	public float cumulativeDragAmount;
 	public float moveSpeed;
 	public float turningMoveSpeed; // speed of forward motion while turning under user control
 	Animator anim;
+
+	private GameObject fish;
+	private GameObject fishParent;
+	private Vector3 targetOffset;
 
 	int tapHash = Animator.StringToHash("tap");
 	float kinematicTimer;
@@ -27,17 +31,27 @@ public class FishAni : MonoBehaviour
 		goneAboveWater = false;
 		GameObject bumpTrigger = GameObject.FindGameObjectWithTag("fishtrig3");
 		triggerCollider = bumpTrigger.GetComponent<SphereCollider> ();
+
+		fish = GameObject.FindGameObjectWithTag("Fishy");
+		fishParent = GameObject.FindGameObjectWithTag("FishParent");
+		targetOffset = new Vector3 (-0.58f, -0.67f, 1.62f);
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
 
-		if (transform.position.z > 166.5f) {
-			waterlevel = 19.7f;
-		} else {
-			waterlevel = 14.7f;
+		// if the fish is jumping, or otherwise non-kinematic, keeping the fishParent position matching to the fish
+		if (fish.transform.parent == null) {
+			fishParent.transform.position = Vector3.Lerp(fishParent.transform.position, gameObject.transform.position - targetOffset, .31f);
+			//fishParent.transform.position = gameObject.transform.position - targetOffset;
 		}
+
+//		if (transform.position.z > 166.5f) {
+//			waterlevel = 19.7f;
+//		} else {
+//			waterlevel = 14.7f;
+//		}
 
 		if ((transform.position.y > (waterlevel + 0.8f)) && !(GetComponent<Rigidbody> ().isKinematic)) {
 			goneAboveWater = true;
@@ -52,6 +66,15 @@ public class FishAni : MonoBehaviour
 		if (!(GetComponent<Rigidbody> ().isKinematic)) 
 		{
 			MinimizeTrigger ();
+
+			// simplified returnToKinematic conditions
+			if (kinematicTimer < nonKinematicTime) {
+				kinematicTimer += Time.deltaTime;
+			} else {
+				returnToKinematic();
+			}
+
+			/*
 			// start timer
 			if (transform.position.y < (waterlevel + 0.3f)) {
 				if (kinematicTimer < 0.5f) {
@@ -66,7 +89,7 @@ public class FishAni : MonoBehaviour
 					returnToKinematic();
 				}
 			}
-
+			*/
 		}
 
 
@@ -126,6 +149,13 @@ public class FishAni : MonoBehaviour
 	}
 
 	public void returnToKinematic() {
+
+		// reset the fishParent position to be close to the fish
+		fishParent.transform.position = gameObject.transform.position - targetOffset;
+		// then reestablish the parent-child relationship
+		fish.transform.SetParent(fishParent.transform);
+		//gameObject.transform.SetParent(fishParent.transform, false);
+
 		kinematicTimer = 0.0f;
 		goneAboveWater = false;
 		GetComponent<Rigidbody>().isKinematic = true;
@@ -141,6 +171,8 @@ public class FishAni : MonoBehaviour
 		// need to turn kinematic back on
 		setRagdollState(false);
 		MaximizeTrigger ();
+
+
 	}
 
 	public void setRagdollState(bool state) {
