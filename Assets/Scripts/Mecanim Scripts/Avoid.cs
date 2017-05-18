@@ -36,6 +36,8 @@ public class Avoid : StateMachineBehaviour {
 
 		// If fish is above surface
 		if (fish.transform.position.y > (waterlevel - 0.2f)) {
+
+			fishManager.moveSpeed = 0.05f; // slwo down till user looks in a clear direction
 			float amountToRotateDown = (fish.transform.position.y - (waterlevel - 0.2f)) * 4.0f;
 			if (amountToRotateDown > 10.0f) {
 				amountToRotateDown = 10.0f;
@@ -47,7 +49,7 @@ public class Avoid : StateMachineBehaviour {
 		}
 		Debug.Log("Avoid1");
 		if (Physics.Raycast (movingObject.transform.position, movingObject.transform.forward, out hit, hitLength, layermask)) {
-			Debug.Log("Avoid2");
+			Debug.Log ("Avoid2");
 			Debug.DrawRay (movingObject.transform.position, movingObject.transform.forward, Color.yellow, hitLength);
 			// If the obstacle is the water surface, then point the fish back down, and stay in swim state
 			//if (!Input.anyKey) { // don't do automatic turning if the user is trying to control turning (mouse, or any key, down)
@@ -57,6 +59,8 @@ public class Avoid : StateMachineBehaviour {
 				fish.transform.Rotate (directionChange);
 			} else {
 				// Otherwise, change the state to SawObstacle
+				fishManager.moveSpeed = 0.003f;
+				animator.SetBool ("foundClearDirection", false);
 				animator.SetBool ("sawObstacle", true);
 			}
 			Vector3 hitNormal = hit.normal.normalized; // is it necc. to normalize or has it already been normalized?
@@ -74,6 +78,8 @@ public class Avoid : StateMachineBehaviour {
 			//TODO: how to put moveSpeed to where it has an effect
 			//	fishManager.turningMoveSpeed = fishManager.turningMoveSpeed * (hit.distance / hitLength);
 			//}
+		} else {
+			animator.SetBool ("foundClearDirection", true); // in VR, if a new user-determined rotation finds a clear direction, return to swimming state
 		}
 	}
 

@@ -5,19 +5,38 @@ public class FindClearDirection : StateMachineBehaviour {
 
 	private GameObject fish;
 	private Vector3 direction;
+	private FishAni fishManager;
+	private GameObject mainCam;
 
 	 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 	//
 		fish = animator.gameObject;
+		fishManager = fish.GetComponent<FishAni> ();
+		fishManager.moveSpeed = 0.005f; // slow down the fish, until the user rotates to a clear direction
+		mainCam = GameObject.FindGameObjectWithTag("MainCamera");
 		direction = fish.transform.forward;
 
 	}
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+
+
+		RaycastHit hit = new RaycastHit();
+		float hitLength = 9.0f;
+		int layermask = (1<<11) | (1<<4); // layer 13 is the fish trigger, don't want the ray to detect that
+		Debug.DrawRay (fish.transform.position, mainCam.transform.forward, Color.red, 6.0f);
+		if (Physics.Raycast (fish.transform.position, mainCam.transform.forward, out hit, hitLength, layermask)) {
+			fishManager.moveSpeed = 1.4f;
+			animator.SetBool ("foundClearDirection", true);
+		}
+
+
 		//if (Vector3.Dot (fish.transform.forward, direction) > 0.9f) {
-			Vector3 chdir = fish.GetComponent<FishAni> ().chdir;
+
+		Vector3 chdir = fishManager.chdir;
+
 			direction = (fish.transform.forward + 0.2f * chdir).normalized;
 			Debug.DrawRay (fish.transform.position, direction, Color.black, 15.0f);
 			Debug.DrawRay (fish.transform.position, chdir, Color.blue, 15.0f);
@@ -31,6 +50,7 @@ public class FindClearDirection : StateMachineBehaviour {
 //			animator.SetBool ("foundClearDirection", true);
 //		}
 
+		/* Not using for VR -- rotation is set by user
 		RaycastHit hit = new RaycastHit();
 		float hitLength = 9.0f;
 		int layermask = (1<<11) | (1<<4); // layer 13 is the fish trigger, don't want the ray to detect that
@@ -42,14 +62,17 @@ public class FindClearDirection : StateMachineBehaviour {
 			if (Physics.Raycast (fish.transform.position, fish.transform.forward, out hit, 5.5f, layermask)) {
 				animator.SetBool ("foundClearDirection", false);
 				animator.SetBool ("obstacleIsClose", true);
+				fishManager.moveSpeed = 0.0f; // stop the fish so it doesn't hit the obstacle. Until the user turns to a clear direction
 			} else if (Physics.Raycast (fish.transform.position, fish.transform.forward, out hit, hitLength, layermask)) {
 				//if (Physics.Raycast (fish.transform.position, fish.transform.forward, out hit, 0.5f, layermask)) {
 				Debug.DrawRay (fish.transform.position, fish.GetComponent<Rigidbody> ().transform.forward * 3.5f, Color.magenta, 1.0f);
 				//}
 			} else {
+				fishManager.moveSpeed = 0.13f;
 				animator.SetBool ("foundClearDirection", true);
 			}
 		}
+		*/
 	}
 
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state

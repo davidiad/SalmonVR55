@@ -13,14 +13,34 @@ public class FindClearDirectionClose : StateMachineBehaviour {
 		initDirectionsToCheck ();
 		fish = animator.gameObject;
 
+		/* Automatic, not user controlled, direction
 		// Set new direction for fish
 		moveDirection = fish.transform.forward + 0.5f * fish.transform.right;
 		rot = Quaternion.LookRotation(moveDirection);
-
+		*/
 	}
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+
+		// 1. Get the direction from the camera, which is controlled by user
+		// 2. Check whether that direction is clear
+		// 3. If clear, move back to  Sees Obstacle state (where the speed is set to slow)
+		// 4. MoveSpeed is now set to very slow, in Sees Obstacle state. Repeat this process:
+		// 5. Get the Cam direction.
+		// 6. check whether clear
+		// 7. If clear, go to Swim State, where normal speed is resumed
+
+		RaycastHit hit = new RaycastHit();
+		int layermask = (1<<11) | (1<<4); // layer 13 is the fish trigger, don't want the ray to detect that
+		Debug.DrawRay (fish.transform.position, fish.GetComponent<Rigidbody> ().transform.forward, Color.green, 3.0f);
+		if (Physics.Raycast (fish.transform.position, fish.transform.forward, out hit, 4.0f, layermask)) {
+			animator.SetBool ("foundClearDirection", true);
+		}
+
+
+
+		/* auto-determine direction -- not using with VR
 		moveDirection = findBestDirection ();
 		rot = Quaternion.LookRotation(moveDirection);
 		fish.transform.rotation = Quaternion.Slerp(fish.transform.rotation, rot, 2.0f * Time.deltaTime);
@@ -30,6 +50,9 @@ public class FindClearDirectionClose : StateMachineBehaviour {
 		if (Vector3.Dot (fish.transform.forward, moveDirection) > 0.96f) {
 			animator.SetBool ("foundClearDirection", true);
 		}
+		*/
+
+
 		//RaycastHit hit = new RaycastHit();
 		//int layermask = (1<<11) | (1<<4); // layer 13 is the fish trigger, don't want the ray to detect that
 		//Debug.DrawRay (fish.transform.position, fish.GetComponent<Rigidbody> ().transform.forward, Color.green, 3.0f);
