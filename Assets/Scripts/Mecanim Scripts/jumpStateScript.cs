@@ -6,9 +6,10 @@ public class jumpStateScript : StateMachineBehaviour {
 	GameObject go;
 	GameObject rotationDummy;
 	Rigidbody gorb;
-	public float jumpforce = 1000.0f;
+	public float jumpforce = 1500.0f;
 	private Vector3 jumpDirection;
 	Quaternion targetRotation;
+	private Vector3 targetOffset;
 
 	 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -34,6 +35,10 @@ public class jumpStateScript : StateMachineBehaviour {
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		Debug.Log ("Updating Jump State");
 		gorb.transform.rotation = Quaternion.Slerp(gorb.transform.rotation, targetRotation, 3.5f * Time.deltaTime);
+
+		// Get the vector from the fish position to the fishParent position
+		targetOffset = go.transform.position - go.transform.parent.position;
+		go.GetComponent<FishAni> ().targetOffset = targetOffset;
 
 		//if ((Vector3.Dot (go.transform.forward, jumpDirection)) > 0.98) {
 		gorb.transform.parent = null;

@@ -12,7 +12,7 @@ public class FishAni : MonoBehaviour
 
 	private GameObject fish;
 	private GameObject fishParent;
-	private Vector3 targetOffset;
+	public Vector3 targetOffset = new Vector3 (-0.58f, -0.67f, 1.62f);
 
 	int tapHash = Animator.StringToHash("tap");
 	float kinematicTimer;
@@ -34,7 +34,7 @@ public class FishAni : MonoBehaviour
 
 		fish = GameObject.FindGameObjectWithTag("Fishy");
 		fishParent = GameObject.FindGameObjectWithTag("FishParent");
-		targetOffset = new Vector3 (-0.58f, -0.67f, 1.62f);
+
 	}
 
 	// Update is called once per frame
@@ -43,7 +43,7 @@ public class FishAni : MonoBehaviour
 
 		// if the fish is jumping, or otherwise non-kinematic, keeping the fishParent position matching to the fish
 		if (fish.transform.parent == null) {
-			fishParent.transform.position = Vector3.Lerp(fishParent.transform.position, gameObject.transform.position - targetOffset, .31f);
+			fishParent.transform.position = Vector3.Lerp(fishParent.transform.position, gameObject.transform.position - targetOffset, .11f);
 			//fishParent.transform.position = gameObject.transform.position - targetOffset;
 		}
 
@@ -152,6 +152,8 @@ public class FishAni : MonoBehaviour
 
 		// reset the fishParent position to be close to the fish
 		fishParent.transform.position = gameObject.transform.position - targetOffset;
+		// match the fishParent rotation to the rotation of the camera
+		fishParent.transform.rotation = GameObject.FindGameObjectWithTag("MainCamera").transform.rotation;
 		// then reestablish the parent-child relationship
 		fish.transform.SetParent(fishParent.transform);
 		//gameObject.transform.SetParent(fishParent.transform, false);
