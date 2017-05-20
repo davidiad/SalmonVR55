@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CamMatchTarget : MonoBehaviour {
 
-	public float moveSpeed; //needed here??
+	private float moveSpeed;
 
 	private GameObject fish;
 	private GameObject fishParent;
@@ -15,7 +15,7 @@ public class CamMatchTarget : MonoBehaviour {
 		fish = GameObject.FindGameObjectWithTag("Fishy");
 		fishParent = GameObject.FindGameObjectWithTag("FishParent");
 		fishManager = fish.GetComponent<FishAni> ();
-		moveSpeed = 1.0f;
+		moveSpeed = 0.1f;
 	}
 	
 	// Update is called once per frame
