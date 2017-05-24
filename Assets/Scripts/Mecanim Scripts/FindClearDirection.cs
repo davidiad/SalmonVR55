@@ -13,9 +13,11 @@ public class FindClearDirection : StateMachineBehaviour {
 	//
 		fish = animator.gameObject;
 		fishManager = fish.GetComponent<FishAni> ();
+		fish.transform.position += fish.transform.forward * fishManager.moveSpeed; // 1 last fish movement, so that camera matches up
 		fishManager.moveSpeed = 0.0f;//145f; // slow down the fish, until the user rotates to a clear direction
 		mainCam = GameObject.FindGameObjectWithTag("MainCamera");
 		direction = fish.transform.forward;
+
 
 	}
 
@@ -42,9 +44,11 @@ public class FindClearDirection : StateMachineBehaviour {
 			Debug.DrawRay (fish.transform.position, chdir, Color.blue, 15.0f);
 			Debug.DrawRay ((fish.transform.position + direction).normalized, (fish.transform.position + chdir).normalized, Color.red, 15.0f);
 		//}
+
+		/* Turn off rotation update for now, as moveSpeed has been set to 0
 		Quaternion rot = Quaternion.LookRotation(direction);
 		fish.transform.rotation = Quaternion.Slerp(fish.transform.rotation, rot, 3.0f * Time.deltaTime);
-
+		*/
 
 //		if (Vector3.Dot (fish.transform.forward, direction) > 0.9f) {
 //			animator.SetBool ("foundClearDirection", true);

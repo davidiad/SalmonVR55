@@ -42,8 +42,14 @@ public class SwimStateScript : StateMachineBehaviour {
 
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		//updateMoveSpeed ();
-		fishParent.transform.position += fish.transform.forward * moveSpeed;
+		//if (!animator.GetBool("sawObstacle")) {
+			fishParent.transform.position += fish.transform.forward * moveSpeed;
+		//}
 	}
+
+//	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+//		fishParent.transform.position -= fish.transform.forward * moveSpeed;
+//	}
 
 
 	public void updateMoveSpeed()

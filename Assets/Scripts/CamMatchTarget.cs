@@ -21,14 +21,19 @@ public class CamMatchTarget : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		moveSpeed = fishManager.moveSpeed;
-		gameObject.transform.position = fishParent.transform.position;
-	}
-
-	void LateUpdate () {
-		// gameObject is the Main Camera, which this script is attached to
+		//if (fish.GetComponent<Animator> ().GetCurrentAnimatorStateInfo(0).IsName ("swim")) {
+			gameObject.transform.position = fishParent.transform.position;
 		Quaternion rotation = gameObject.transform.rotation;
 		fishParent.transform.rotation = rotation;
-		// what if fish rotation changes due to its parent rotation chaning?
 		fish.transform.rotation = gameObject.transform.rotation;
+		//}
 	}
+
+//	void LateUpdate () {
+//		// gameObject is the Main Camera, which this script is attached to
+//		Quaternion rotation = gameObject.transform.rotation;
+//		fishParent.transform.rotation = rotation;
+//		// what if fish rotation changes due to its parent rotation chaning?
+//		fish.transform.rotation = gameObject.transform.rotation;
+//	}
 }

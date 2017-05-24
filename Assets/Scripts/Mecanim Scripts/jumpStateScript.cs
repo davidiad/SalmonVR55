@@ -4,9 +4,10 @@ using System.Collections;
 public class jumpStateScript : StateMachineBehaviour {
 
 	GameObject go;
-	GameObject rotationDummy;
+	//GameObject rotationDummy;
+	private GameObject fishParent;
 	Rigidbody gorb;
-	public float jumpforce = 1500.0f;
+	public float jumpforce = 13500.0f;
 	private Vector3 jumpDirection;
 	Quaternion targetRotation;
 	private Vector3 targetOffset;
@@ -16,14 +17,15 @@ public class jumpStateScript : StateMachineBehaviour {
 
 		go = animator.gameObject;
 		gorb = go.GetComponent<Rigidbody>();
-		rotationDummy = new GameObject();
-		rotationDummy.transform.eulerAngles = new Vector3(-30.0f, go.transform.eulerAngles.y, 0.0f);
-		//Vector3 currentAngles = gorb.transform.rotation.eulerAngles;
-		jumpDirection = rotationDummy.transform.forward;
-		Debug.Log (jumpDirection);
+		fishParent = GameObject.FindGameObjectWithTag ("FishParent");
+
+		//rotationDummy = new GameObject();
+		//rotationDummy.transform.eulerAngles = new Vector3(-30.0f, go.transform.eulerAngles.y, 0.0f);
+//		jumpDirection = rotationDummy.transform.forward;
+
+		jumpDirection = fishParent.transform.forward;
+
 		targetRotation = Quaternion.LookRotation (jumpDirection);
-		//targetRotation = Quaternion.Euler(jumpDirection);
-		//Vector3 moveDirection =  new Vector3(gorb.transform.forward.x, gorb.transform.forward.y, gorb.transform.forward.z);
 
 		GameObject[] downwaters = GameObject.FindGameObjectsWithTag("WaterDown");
 		foreach (GameObject downwater in downwaters) {
@@ -33,7 +35,7 @@ public class jumpStateScript : StateMachineBehaviour {
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		Debug.Log ("Updating Jump State");
+
 		gorb.transform.rotation = Quaternion.Slerp(gorb.transform.rotation, targetRotation, 3.5f * Time.deltaTime);
 
 		// Get the vector from the fish position to the fishParent position
