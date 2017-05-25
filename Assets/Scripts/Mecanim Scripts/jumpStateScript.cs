@@ -7,7 +7,7 @@ public class jumpStateScript : StateMachineBehaviour {
 	//GameObject rotationDummy;
 	private GameObject fishParent;
 	Rigidbody gorb;
-	public float jumpforce = 13500.0f;
+	private float jumpforce = 500.0f;
 	private Vector3 jumpDirection;
 	Quaternion targetRotation;
 	private Vector3 targetOffset;
@@ -47,7 +47,9 @@ public class jumpStateScript : StateMachineBehaviour {
 			gorb.isKinematic = false;
 			setRagdollState(true);
 			animator.enabled = false;
-			Vector3 forceVector = jumpforce * jumpDirection;
+
+			Vector3 forceVector = 2f * jumpforce * jumpDirection;
+		Debug.Log ("JUMPFORCE: " + jumpforce);
 			gorb.AddForce(forceVector);
 		//}
 		if(Input.GetMouseButtonDown(0))

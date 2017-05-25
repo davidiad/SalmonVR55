@@ -20,6 +20,8 @@ public class SwimStateScript : StateMachineBehaviour {
 		//reset moveSpeed
 		moveSpeed = 0.39f;
 		fishManager.moveSpeed = moveSpeed;
+
+		fishManager.alignCamToFish ();
 	}
 
 	/*

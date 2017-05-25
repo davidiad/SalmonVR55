@@ -9,10 +9,14 @@ public class FishAni : MonoBehaviour
 	public float moveSpeed;
 	public float turningMoveSpeed; // speed of forward motion while turning under user control
 	Animator anim;
+	private GameObject mainCam;
 
 	private GameObject fish;
 	private GameObject fishParent;
 	public Vector3 targetOffset = new Vector3 (-0.58f, -0.67f, 1.62f);
+
+	private GameObject dummyFish;
+	private GameObject dummyParent;
 
 	int tapHash = Animator.StringToHash("tap");
 	float kinematicTimer;
@@ -27,25 +31,41 @@ public class FishAni : MonoBehaviour
 
 		chdir = new Vector3 (0.0f, 0.0f, 0.0f);
 		kinematicTimer = 0.0f;
-		nonKinematicTime = 2.0f;
+		nonKinematicTime = 3.0f;
 		goneAboveWater = false;
 		GameObject bumpTrigger = GameObject.FindGameObjectWithTag("fishtrig3");
 		triggerCollider = bumpTrigger.GetComponent<SphereCollider> ();
 
 		fish = GameObject.FindGameObjectWithTag("Fishy");
 		fishParent = GameObject.FindGameObjectWithTag("FishParent");
+		mainCam = GameObject.FindGameObjectWithTag ("MainCamera");
+		dummyFish = GameObject.FindGameObjectWithTag ("DummyFish");
+		dummyParent = GameObject.FindGameObjectWithTag ("DummyParent");
 
 	}
 
-	// Update is called once per frame
-	void Update () 
-	{
+	// alternate (and more accurate) way to relalign camera to fish
+	public void alignCamToFish() {
+		dummyFish.transform.position = fish.transform.position;
+		dummyFish.transform.rotation = mainCam.transform.rotation;
+		//fishParent.transform.position = dummyParent.transform.position;
+		fishParent.transform.position = Vector3.Lerp(fishParent.transform.position, dummyParent.transform.position, .05f);
+	}
 
-		// if the fish is jumping, or otherwise non-kinematic, keeping the fishParent position matching to the fish
+	// Update is called once per frame
+	void Update () {
+
+//		// if the fish is jumping, or otherwise non-kinematic, keeping the fishParent position matching to the fish
 		if (fish.transform.parent == null) {
-			fishParent.transform.position = Vector3.Lerp(fishParent.transform.position, gameObject.transform.position - targetOffset, .11f);
-			//fishParent.transform.position = gameObject.transform.position - targetOffset;
+			alignCamToFish ();
+			//fishParent.transform.position = Vector3.Lerp(fishParent.transform.position, gameObject.transform.position - targetOffset, .11f);
 		}
+
+
+
+
+
+
 
 //		if (transform.position.z > 166.5f) {
 //			waterlevel = 19.7f;
