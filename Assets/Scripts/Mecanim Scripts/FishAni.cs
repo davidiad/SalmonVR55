@@ -75,6 +75,7 @@ public class FishAni : MonoBehaviour
 
 		if ((transform.position.y > (waterlevel + 0.8f)) && !(GetComponent<Rigidbody> ().isKinematic)) {
 			goneAboveWater = true;
+			Debig.Log ("Gone above water");
 		}
 
 		// mimic the force of the fish falling into the water. Should vary with velocity.

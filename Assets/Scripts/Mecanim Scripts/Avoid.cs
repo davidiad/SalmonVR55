@@ -30,7 +30,7 @@ public class Avoid : StateMachineBehaviour {
 		Vector3 direction = new Vector3 ();
 		direction = movingObject.transform.forward;
 		RaycastHit hit = new RaycastHit ();
-		float hitLength = 8.0f;
+		float hitLength = 12.0f;
 
 		//TODO: adjust amount of compensation to the distance till the hit, to reduce to constant up and down
 		directionChange = new Vector3 (0.0f, 0.0f, 0.0f);

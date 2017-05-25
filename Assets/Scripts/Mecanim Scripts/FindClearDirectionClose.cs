@@ -41,8 +41,9 @@ public class FindClearDirectionClose : StateMachineBehaviour {
 		RaycastHit hit = new RaycastHit();
 		int layermask = (1<<11) | (1<<4); // layer 13 is the fish trigger, don't want the ray to detect that
 		Debug.DrawRay (fish.transform.position, fish.GetComponent<Rigidbody> ().transform.forward, Color.green, 3.0f);
-		if (Physics.Raycast (fish.transform.position, fish.transform.forward, out hit, 4.0f, layermask)) {
+		if (!Physics.Raycast (fish.transform.position, fish.transform.forward, out hit, 12.0f, layermask)) {
 			animator.SetBool ("foundClearDirection", true);
+			Debug.Log ("FCDCLOSE");
 		}
 
 
