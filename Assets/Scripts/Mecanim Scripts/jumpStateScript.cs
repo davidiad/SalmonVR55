@@ -7,8 +7,10 @@ public class jumpStateScript : StateMachineBehaviour {
 	//GameObject rotationDummy;
 	private GameObject fishParent;
 	Rigidbody gorb;
-	private float jumpforce = 500.0f;
+	private FishAni fishManager;
+	private float jumpforce = 700.0f;
 	private Vector3 jumpDirection;
+	//private Vector3 modifiedJumpDirection;
 	Quaternion targetRotation;
 	private Vector3 targetOffset;
 
@@ -19,19 +21,25 @@ public class jumpStateScript : StateMachineBehaviour {
 		gorb = go.GetComponent<Rigidbody>();
 		fishParent = GameObject.FindGameObjectWithTag ("FishParent");
 
+
 		//rotationDummy = new GameObject();
 		//rotationDummy.transform.eulerAngles = new Vector3(-30.0f, go.transform.eulerAngles.y, 0.0f);
 //		jumpDirection = rotationDummy.transform.forward;
 
 		jumpDirection = fishParent.transform.forward;
-
-		targetRotation = Quaternion.LookRotation (jumpDirection);
+		//modifiedJumpDirection = new Vector3 (jumpDirection.x + 1.0f, jumpDirection.y, jumpDirection.z);
+		targetRotation = Quaternion.LookRotation (jumpDirection) * Quaternion.AngleAxis(30.0f, Vector3.right);
 
 		GameObject[] downwaters = GameObject.FindGameObjectsWithTag("WaterDown");
 		foreach (GameObject downwater in downwaters) {
 			downwater.GetComponent<Collider>().enabled = false;
 		}
-	}
+
+		fishManager = go.GetComponent<FishAni> ();
+		//TODO:- convert to a function that accepts a time var, so can reuse in other states, like bump state
+		fishManager.nonKinematicTime = 2.7f;
+		fishManager.MinimizeTrigger ();
+	} 
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -44,11 +52,13 @@ public class jumpStateScript : StateMachineBehaviour {
 
 		//if ((Vector3.Dot (go.transform.forward, jumpDirection)) > 0.98) {
 		gorb.transform.parent = null;
-			gorb.isKinematic = false;
-			setRagdollState(true);
-			animator.enabled = false;
+		gorb.isKinematic = false;
+		setRagdollState(true);
+		animator.enabled = false;
 
-			Vector3 forceVector = 2f * jumpforce * jumpDirection;
+		//Vector3 jumpDirectionModified = jumpDirection * Quaternion.AngleAxis(30, Vector3.right);
+
+		Vector3 forceVector = jumpforce * jumpDirection;
 		Debug.Log ("JUMPFORCE: " + jumpforce);
 			gorb.AddForce(forceVector);
 		//}
@@ -60,7 +70,7 @@ public class jumpStateScript : StateMachineBehaviour {
 
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		animator.enabled = true;
+		//animator.enabled = true;
 	}
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here

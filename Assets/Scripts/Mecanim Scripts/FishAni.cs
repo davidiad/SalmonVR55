@@ -19,7 +19,7 @@ public class FishAni : MonoBehaviour
 	private GameObject dummyParent;
 
 	int tapHash = Animator.StringToHash("tap");
-	float kinematicTimer;
+	public float kinematicTimer;
 	public float nonKinematicTime;
 	bool goneAboveWater;
 	private SphereCollider triggerCollider;
@@ -41,6 +41,7 @@ public class FishAni : MonoBehaviour
 		mainCam = GameObject.FindGameObjectWithTag ("MainCamera");
 		dummyFish = GameObject.FindGameObjectWithTag ("DummyFish");
 		dummyParent = GameObject.FindGameObjectWithTag ("DummyParent");
+
 
 	}
 
@@ -64,76 +65,85 @@ public class FishAni : MonoBehaviour
 
 
 
-
-
-
+		// Adjust waterlevel for waterfall
 //		if (transform.position.z > 166.5f) {
 //			waterlevel = 19.7f;
 //		} else {
 //			waterlevel = 14.7f;
 //		}
 
-		if ((transform.position.y > (waterlevel + 0.8f)) && !(GetComponent<Rigidbody> ().isKinematic)) {
-			goneAboveWater = true;
-			Debig.Log ("Gone above water");
-		}
+		// If fish is above the water, and is Kinematic, go to a new animator state to be defined
 
-		// mimic the force of the fish falling into the water. Should vary with velocity.
-		if (goneAboveWater && (transform.position.y < (waterlevel + 0.8f)) && (transform.position.y > (waterlevel + 0.5f))) {
-			float speed = 25.0f * GetComponent<Rigidbody> ().velocity.y;
-			GetComponent<Rigidbody>().AddForce (Vector3.up * speed); 
-		}
 
-		if (!(GetComponent<Rigidbody> ().isKinematic)) 
-		{
-			MinimizeTrigger ();
 
-			// simplified returnToKinematic conditions
-			if (kinematicTimer < nonKinematicTime) {
-				kinematicTimer += Time.deltaTime;
+		/*** NON-KINEMATIC CASES ***/
+		if (!(GetComponent<Rigidbody> ().isKinematic)) {
+			Debug.Log ("/*** NON-KINEMATIC CASES ***/");
+
+			if (fish.transform.position.y > (waterlevel + 0.8f)) {
+				goneAboveWater = true;
+				Debug.Log ("Gone above water");
 			} else {
-				returnToKinematic();
+				Debug.Log ("Under the water");
 			}
 
-			/*
-			// start timer
-			if (transform.position.y < (waterlevel + 0.3f)) {
-				if (kinematicTimer < 0.5f) {
-					kinematicTimer += Time.deltaTime;
-					// if > .5s, and hasn't gone above water, return to kinematic
-				} else if (!goneAboveWater) { 
-					returnToKinematic();
-					// if has gone above water, return to kin. in 2 or 3 s
-				} else if (kinematicTimer < nonKinematicTime) {
-					kinematicTimer += Time.deltaTime;
-				} else {
-					returnToKinematic();
+			// mimic the force of the fish falling into the water. Should vary with velocity.
+			if (goneAboveWater && (fish.transform.position.y < (waterlevel + 0.8f)) && (fishParent.transform.position.y > (waterlevel + 0.5f))) {
+				float speed = 25.0f * GetComponent<Rigidbody> ().velocity.y;
+				GetComponent<Rigidbody> ().AddForce (Vector3.up * speed); 
+			}
+				
+
+//			// simplified returnToKinematic conditions
+//			if (kinematicTimer < nonKinematicTime) {
+//				kinematicTimer += Time.deltaTime;
+//			} else {
+//				returnToKinematic ();
+//			}
+
+
+//			// start timer
+//			if (fish.transform.position.y < (waterlevel + 0.3f)) {
+//				if (kinematicTimer < 0.5f) {
+//					kinematicTimer += Time.deltaTime;
+//					// if > .5s, and hasn't gone above water, return to kinematic
+//				} else if (!goneAboveWater) { 
+//					returnToKinematic ();
+//					// if has gone above water, return to kin. in 2 or 3 s
+//				} else if (kinematicTimer < nonKinematicTime) {
+//					kinematicTimer += Time.deltaTime;
+//				} else {
+//					returnToKinematic ();
+//				}
+//			}
+		
+
+
+
+			//if (goneAboveWater) {
+				if (fish.transform.position.y < 24.0f) {
+					if (kinematicTimer < nonKinematicTime) {
+						kinematicTimer += Time.deltaTime;
+					} else {
+						//kinematicTimer = 0.0f;
+						goneAboveWater = false;
+						GetComponent<Rigidbody> ().isKinematic = true;
+						// Turn the animator state machine back on, now that we are done with using physics engine
+						anim.enabled = true;
+						// set the state to swim, otherwise it picks up where it left off with jump
+						anim.CrossFade ("swim", 0.0f);
+						GameObject downwater = GameObject.FindWithTag ("WaterDown");
+						//downwater.GetComponent<Collider>().enabled = true;
+						GameObject[] downwaters = GameObject.FindGameObjectsWithTag ("WaterDown");
+						foreach (GameObject watertile in downwaters) {
+							watertile.GetComponent<Collider> ().enabled = true;
+						}
+						// need to turn kinematic back on
+						setRagdollState (false);
+					}
 				}
-			}
-			*/
+			//}
 		}
-
-
-
-		//		if (goneAboveWater) {
-		//			if (transform.position.y < 15.0f) {
-		//				if (kinematicTimer < nonKinematicTime) {
-		//					kinematicTimer += Time.deltaTime;
-		//				} else {
-		//					kinematicTimer = 0.0f;
-		//					goneAboveWater = false;
-		//					GetComponent<Rigidbody>().isKinematic = true;
-		//					// Turn the animator state machine back on, now that we are done with using physics engine
-		//					anim.enabled = true;
-		//					// set the state to swim, otherwise it picks up where it left off with jump
-		//					anim.CrossFade("swim", 0.0f);
-		//					GameObject downwater = GameObject.FindWithTag("WaterDown");
-		//					downwater.GetComponent<Collider>().enabled = true;
-		//					// need to turn kinematic back on
-		//					setRagdollState(false);
-		//				}
-		//			}
-		//		}// else { // Has not gone above water. // If non-Kinematic, and 1/2 second has passed, return it to kinematic
 
 
 		// trigger to jump state
@@ -153,7 +163,7 @@ public class FishAni : MonoBehaviour
 		}
 	}
 
-	private void MinimizeTrigger() {
+	public void MinimizeTrigger() {
 
 		if (triggerCollider != null) {
 			triggerCollider.radius = 0.01f;
@@ -161,7 +171,7 @@ public class FishAni : MonoBehaviour
 		}
 	}
 
-	private void MaximizeTrigger() {
+	public void MaximizeTrigger() {
 
 		if (triggerCollider != null) {
 			triggerCollider.radius = 0.15f;
@@ -172,7 +182,9 @@ public class FishAni : MonoBehaviour
 	public void returnToKinematic() {
 
 		// reset the fishParent position to be close to the fish
-		fishParent.transform.position = gameObject.transform.position - targetOffset;
+		//fishParent.transform.position = gameObject.transform.position - targetOffset;
+
+
 		// match the fishParent rotation to the rotation of the camera
 		fishParent.transform.rotation = GameObject.FindGameObjectWithTag("MainCamera").transform.rotation;
 		// then reestablish the parent-child relationship
@@ -194,6 +206,7 @@ public class FishAni : MonoBehaviour
 		// need to turn kinematic back on
 		setRagdollState(false);
 		MaximizeTrigger ();
+		alignCamToFish();
 
 
 	}

@@ -6,12 +6,17 @@ public class BumpTrigger : MonoBehaviour {
 
 
 	public GameObject GO;
+	private FishAni fishManager;
 
 	//private Vector3 reboundDirection;
 
 	public void OnTriggerEnter() {
 		Debug.Log("fish trigger");
 		Animator animator = GO.GetComponent<Animator> ();
+		fishManager = GO.GetComponent<FishAni> ();
+		fishManager.MinimizeTrigger ();
+		fishManager.nonKinematicTime = 0.5f;
+
 		int bumpedHash = Animator.StringToHash("bumped");
 		animator.SetTrigger (bumpedHash);
 

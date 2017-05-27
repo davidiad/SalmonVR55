@@ -6,12 +6,16 @@ public class BumpStateScript : StateMachineBehaviour
 	public float bumpForce = -20.0f;
 	private GameObject GO;
 	private Rigidbody GORB;
+	private FishAni fishManager;
 	private Vector3 reboundDirection;
 
 
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		GO = animator.gameObject;
 		GORB = GO.GetComponent<Rigidbody>();
+		fishManager = GO.GetComponent<FishAni> ();
+		fishManager.kinematicTimer = 0.5f;
+
 		GORB.isKinematic = true;
 
 		reboundDirection = -GORB.transform.forward;
