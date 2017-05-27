@@ -13,10 +13,11 @@ public class jumpStateScript : StateMachineBehaviour {
 	//private Vector3 modifiedJumpDirection;
 	Quaternion targetRotation;
 	private Vector3 targetOffset;
+	public int counter;
 
 	 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-
+		counter = 0;
 		go = animator.gameObject;
 		gorb = go.GetComponent<Rigidbody>();
 		fishParent = GameObject.FindGameObjectWithTag ("FishParent");
@@ -32,7 +33,9 @@ public class jumpStateScript : StateMachineBehaviour {
 
 		GameObject[] downwaters = GameObject.FindGameObjectsWithTag("WaterDown");
 		foreach (GameObject downwater in downwaters) {
+			counter += 1; // counter is just for testing, no need to keep
 			downwater.GetComponent<Collider>().enabled = false;
+			Debug.Log ("DISABLED WATER COLLIDER: " + counter);
 		}
 
 		fishManager = go.GetComponent<FishAni> ();

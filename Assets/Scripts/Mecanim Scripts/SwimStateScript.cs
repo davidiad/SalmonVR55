@@ -45,6 +45,14 @@ public class SwimStateScript : StateMachineBehaviour {
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		//updateMoveSpeed ();
 		//if (!animator.GetBool("sawObstacle")) {
+
+		// Fish has swum just above the water surface, so it needs to fall
+		if (fishParent.transform.position.y > fishManager.waterlevel + 1.0f) {
+			animator.SetTrigger ("swamAboveWater");
+		}
+
+
+
 			fishParent.transform.position += fish.transform.forward * moveSpeed;
 		//}
 	}

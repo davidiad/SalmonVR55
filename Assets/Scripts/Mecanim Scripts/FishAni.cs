@@ -49,18 +49,19 @@ public class FishAni : MonoBehaviour
 	public void alignCamToFish() {
 		dummyFish.transform.position = fish.transform.position;
 		dummyFish.transform.rotation = mainCam.transform.rotation;
-		//fishParent.transform.position = dummyParent.transform.position;
-		fishParent.transform.position = Vector3.Lerp(fishParent.transform.position, dummyParent.transform.position, .05f);
+		fishParent.transform.position = dummyParent.transform.position;
+		//fishParent.transform.position = Vector3.Lerp(fishParent.transform.position, dummyParent.transform.position, .05f);
+		fish.transform.SetParent(fishParent.transform);
 	}
 
 	// Update is called once per frame
 	void Update () {
 
-//		// if the fish is jumping, or otherwise non-kinematic, keeping the fishParent position matching to the fish
-		if (fish.transform.parent == null) {
-			alignCamToFish ();
-			//fishParent.transform.position = Vector3.Lerp(fishParent.transform.position, gameObject.transform.position - targetOffset, .11f);
-		}
+////		// if the fish is jumping, or otherwise non-kinematic, keeping the fishParent position matching to the fish
+//		if (fish.transform.parent == null) {
+//			alignCamToFish ();
+//			//fishParent.transform.position = Vector3.Lerp(fishParent.transform.position, gameObject.transform.position - targetOffset, .11f);
+//		}
 
 
 
@@ -161,6 +162,9 @@ public class FishAni : MonoBehaviour
 				}
 			}
 		}
+
+
+
 	}
 
 	public void MinimizeTrigger() {
@@ -185,10 +189,12 @@ public class FishAni : MonoBehaviour
 		//fishParent.transform.position = gameObject.transform.position - targetOffset;
 
 
-		// match the fishParent rotation to the rotation of the camera
-		fishParent.transform.rotation = GameObject.FindGameObjectWithTag("MainCamera").transform.rotation;
+//		// match the fishParent rotation to the rotation of the camera
+//		fishParent.transform.rotation = GameObject.FindGameObjectWithTag("MainCamera").transform.rotation;
+
+		alignCamToFish ();
 		// then reestablish the parent-child relationship
-		fish.transform.SetParent(fishParent.transform);
+		//fish.transform.SetParent(fishParent.transform);
 		//gameObject.transform.SetParent(fishParent.transform, false);
 
 		kinematicTimer = 0.0f;
@@ -206,7 +212,6 @@ public class FishAni : MonoBehaviour
 		// need to turn kinematic back on
 		setRagdollState(false);
 		MaximizeTrigger ();
-		alignCamToFish();
 
 
 	}
